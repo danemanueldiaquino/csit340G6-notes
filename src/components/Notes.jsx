@@ -19,6 +19,7 @@ function Notes({ name }) {
     title: '',
     body: '',
   })
+  const [search, setSearch] = useState('')
 
   function handleChange(e) {
     const { name, value } = e.target
@@ -59,6 +60,10 @@ function Notes({ name }) {
     )
   }
 
+  const filteredNotes = notes.filter((note) =>
+    note.title.toLowerCase().includes(search.toLowerCase())
+  )
+
   return (
     <div className="m-3 grid min-h-[calc(100vh-1.5rem)] grid-cols-1 overflow-hidden rounded-xl border border-[#e6e0de] bg-[#f5f5f5] text-[#222222] lg:grid-cols-[320px_1fr]">
       <aside className="flex min-h-[520px] flex-col bg-white px-6 py-6 shadow-[0_2px_4px_0_rgba(0,0,0,0.2),0_25px_50px_0_rgba(0,0,0,0.1)] lg:sticky lg:top-3 lg:h-[calc(100vh-1.5rem)] lg:min-h-0">
@@ -75,6 +80,8 @@ function Notes({ name }) {
             <input
               type="search"
               placeholder="Search by title"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               className="h-10 w-full border border-[#e6e6e6] px-3 text-sm outline-none placeholder:text-black/40 placeholder:italic focus:border-[#cf7d7d]"
             />
           </div>
@@ -116,7 +123,7 @@ function Notes({ name }) {
       <main className="min-w-0 px-4 py-6 sm:px-6 lg:px-9 lg:py-8">
         <h2 className="mb-4 text-2xl">All notes</h2>
         <ul className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {notes.map((note) => (
+          {filteredNotes.map((note) => (
             <li
               key={note.id}
               className="relative min-h-32 bg-white px-5 py-4 shadow-[0_2px_4px_0_rgba(0,0,0,0.2),0_25px_50px_0_rgba(0,0,0,0.1)]"
@@ -134,7 +141,7 @@ function Notes({ name }) {
           ))}
         </ul>
 
-        {notes.length === 0 && (
+        {filteredNotes.length === 0 && (
           <p className="text-lg text-[#949494]">
             No notes found
           </p>
