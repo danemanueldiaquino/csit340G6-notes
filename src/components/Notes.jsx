@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import NoteCard from './NoteCard.jsx'
 import Info from './Info.jsx'
 
@@ -15,13 +15,13 @@ const startingNotes = [
   },
 ]
 
-
 function Notes({ name }) {
   const titleRef = useRef(null)
+
   const [notes, setNotes] = useState(() => {
-  const saved = localStorage.getItem('notes')
-  return saved ? JSON.parse(saved) : startingNotes
-})
+    const saved = localStorage.getItem('notes')
+    return saved ? JSON.parse(saved) : startingNotes
+  })
 
   const [form, setForm] = useState({
     title: '',
@@ -31,17 +31,17 @@ function Notes({ name }) {
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-  localStorage.setItem('notes', JSON.stringify(notes))
-}, [notes])
+    localStorage.setItem('notes', JSON.stringify(notes))
+  }, [notes])
 
   useEffect(() => {
-  const id = setTimeout(() => {
-    localStorage.setItem('draft', JSON.stringify(form))
-  }, 1000)
+    const id = setTimeout(() => {
+      localStorage.setItem('draft', JSON.stringify(form))
+    }, 1000)
 
-  return () => clearTimeout(id)
-}, [form])
-  
+    return () => clearTimeout(id)
+  }, [form])
+
   function handleChange(e) {
     const { name, value } = e.target
 
@@ -68,26 +68,22 @@ function Notes({ name }) {
     }
 
     setNotes((prev) => [...prev, newNote])
-
     setForm({
       title: '',
       body: '',
     })
-
-    titleRef.current.focus()
+    titleRef.current?.focus()
   }
 
-  function handleDelete(id) {
-    setNotes((prev) =>
-      prev.filter((note) => note.id !== id)
-    )
-  }
+  const handleDelete = useCallback((id) => {
+    setNotes((prev) => prev.filter((note) => note.id !== id))
+  }, [])
 
   const filteredNotes = useMemo(() => {
-  return notes.filter((note) =>
-    note.title.toLowerCase().includes(search.toLowerCase())
-  )
-}, [notes, search])
+    return notes.filter((note) =>
+      note.title.toLowerCase().includes(search.toLowerCase())
+    )
+  }, [notes, search])
 
   return (
     <div className="m-3 grid min-h-[calc(100vh-1.5rem)] grid-cols-1 overflow-hidden rounded-xl border border-[#e6e0de] bg-[#f5f5f5] text-[#222222] lg:grid-cols-[320px_1fr]">
@@ -148,22 +144,16 @@ function Notes({ name }) {
 
       <main className="min-w-0 px-4 py-6 sm:px-6 lg:px-9 lg:py-8">
         <h2 className="mb-4 text-2xl">All notes</h2>
-        <ul className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {filteredNotes.map((note) => (
-            <li
-              key={note.id}
-              className="relative min-h-32 bg-white px-5 py-4 shadow-[0_2px_4px_0_rgba(0,0,0,0.2),0_25px_50px_0_rgba(0,0,0,0.1)]"
-            >
-              <NoteCard title={note.title} body={note.body} />
 
-              <button
-                type="button"
-                onClick={() => handleDelete(note.id)}
-                className="absolute top-3 right-4 cursor-pointer text-lg leading-none text-[#949494] hover:text-[#c18585]"
-              >
-                ×
-              </button>
-            </li>
+        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {filteredNotes.map((note) => (
+            <NoteCard
+              key={note.id}
+              id={note.id}
+              title={note.title}
+              body={note.body}
+              onDelete={handleDelete}
+            />
           ))}
         </ul>
 
