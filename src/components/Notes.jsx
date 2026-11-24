@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import NoteCard from './NoteCard.jsx'
 import Info from './Info.jsx'
 
@@ -17,6 +17,7 @@ const startingNotes = [
 
 
 function Notes({ name }) {
+  const titleRef = useRef(null)
   const [notes, setNotes] = useState(() => {
   const saved = localStorage.getItem('notes')
   return saved ? JSON.parse(saved) : startingNotes
@@ -72,6 +73,8 @@ function Notes({ name }) {
       title: '',
       body: '',
     })
+
+    titleRef.current.focus()
   }
 
   function handleDelete(id) {
@@ -112,6 +115,7 @@ function Notes({ name }) {
             </p>
 
             <input
+              ref={titleRef}
               name="title"
               type="text"
               placeholder="Title"
