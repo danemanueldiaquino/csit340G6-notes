@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import NoteCard from './NoteCard.jsx'
 import Info from './Info.jsx'
 
@@ -21,6 +21,11 @@ function Notes({ name }) {
   })
   const [search, setSearch] = useState('')
 
+
+  useEffect(() => {
+  localStorage.setItem('notes', JSON.stringify(notes))
+}, [notes])
+  
   function handleChange(e) {
     const { name, value } = e.target
 
