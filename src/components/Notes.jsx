@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import NoteCard from './NoteCard.jsx'
 import Info from './Info.jsx'
 
@@ -83,9 +83,11 @@ function Notes({ name }) {
     )
   }
 
-  const filteredNotes = notes.filter((note) =>
+  const filteredNotes = useMemo(() => {
+  return notes.filter((note) =>
     note.title.toLowerCase().includes(search.toLowerCase())
   )
+}, [notes, search])
 
   return (
     <div className="m-3 grid min-h-[calc(100vh-1.5rem)] grid-cols-1 overflow-hidden rounded-xl border border-[#e6e0de] bg-[#f5f5f5] text-[#222222] lg:grid-cols-[320px_1fr]">
