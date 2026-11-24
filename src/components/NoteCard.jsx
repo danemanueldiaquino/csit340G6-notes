@@ -1,16 +1,19 @@
 import { useState } from 'react'
+import { useContext } from 'react'
+import { SettingsContext } from '../SettingsContext'
 
 function NoteCard({ title, body }) {
   const [isOpen, setIsOpen] = useState(false)
+  const { largeText } = useContext(SettingsContext)
 
   return (
     <div>
-      <h3 className="pr-8 text-sm font-normal break-words">
+      <h3 className="pr-8 text-sm font-normal break-words" style={{ fontSize: largeText ? '28px' : '22px' }}>
         {title}
       </h3>
 
       {isOpen && (
-        <p className="mt-2 text-xs break-words whitespace-pre-wrap text-[#4d4d4d]">
+        <p className="mt-2 text-xs break-words whitespace-pre-wrap text-[#4d4d4d]" style={{ fontSize: largeText ? '21px' : '17px' }}>
           {body}
         </p>
       )}
